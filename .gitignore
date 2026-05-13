@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+.env
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Streamlit cache local
+.streamlit/secrets.toml
+
+# Arquivos gerados
+*.xlsx
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db
