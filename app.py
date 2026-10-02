@@ -182,7 +182,7 @@ with col2:
 with col3:
     abastecimento = st.number_input("Abastecimento (R$)", min_value=0, step=50, value=0)
 
-st.markdown("<div class='section-header'>Deduções do saldo</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-header'>Deduções</div>", unsafe_allow_html=True)
 
 col_a, col_b = st.columns(2)
 with col_a:
@@ -209,7 +209,7 @@ outros_desc = st.text_input("Descrição outros", value="", disabled=not usar_ou
 outros = st.number_input("Valor outros (R$)", min_value=0, step=10, value=0, disabled=not usar_outros)
 
 adiantamento = frete * pct_adi / 100
-saldo_bruto  = frete - adiantamento
+saldo_bruto  = frete
 
 total_deducoes = (
     (comissao if usar_comissao else 0) +
@@ -227,8 +227,8 @@ st.markdown("<div class='section-header'>Resultado</div>", unsafe_allow_html=Tru
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.markdown(f"""<div class='result-card'>
-        <div class='result-label'>Frete total</div>
-        <div class='result-value val-blue'>R$ {frete:,.0f}</div>
+        <div class='result-label'>Saldo bruto (100%)</div>
+        <div class='result-value val-blue'>R$ {saldo_bruto:,.0f}</div>
     </div>""".replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
 
 with c2:
@@ -266,8 +266,8 @@ else:
 formula_html = f"""
 <div class='formula-box'>
 {motorista or "Motorista"} &nbsp;·&nbsp; {data_viagem.strftime('%d/%m/%Y')} &nbsp;·&nbsp; {rota_selecionada}<br>
-R$ {frete:,.0f} × {pct_adi}% = R$ {adiantamento:,.0f} adiantado<br>
-saldo bruto R$ {saldo_bruto:,.0f} − [{ded_str}] = <strong style='color:#4ade80'>R$ {max(0,liquido):,.0f} líquido</strong>{obs_abast}
+R$ {frete:,.0f} × {pct_adi}% = R$ {adiantamento:,.0f} adiantado ({pct_adi}%)<br>
+saldo bruto (100%) R$ {saldo_bruto:,.0f} − [{ded_str}] = <strong style='color:#4ade80'>R$ {max(0,liquido):,.0f} líquido</strong>{obs_abast}
 </div>
 """
 st.markdown(formula_html.replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
@@ -377,11 +377,9 @@ def gerar_xlsx():
     ws.row_dimensions[r].height = 22
     r += 1
 
-    set_row(r, "Frete bruto", frete, fonte_azul, cor_neutro)
+    set_row(r, "Saldo bruto (100%)", saldo_bruto, fonte_azul, cor_neutro)
     r += 1
     set_row(r, f"Adiantamento ({pct_adi}%)", adiantamento, fonte_amber, cor_neutro)
-    r += 1
-    set_row(r, "Saldo bruto", saldo_bruto, fonte_valor, cor_neutro)
     r += 1
     set_row(r, "Abastecimento", abastecimento, fonte_valor, cor_neutro)
     r += 1
@@ -390,7 +388,7 @@ def gerar_xlsx():
     # Seção: Deduções
     ws.merge_cells(f"A{r}:B{r}")
     s = ws[f"A{r}"]
-    s.value = "DEDUÇÕES DO SALDO"
+    s.value = "DEDUÇÕES"
     s.font = fonte_secao
     s.fill = fill(cor_secao)
     s.alignment = Alignment(vertical="center")
